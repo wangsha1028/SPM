@@ -110,14 +110,18 @@ def EMD_2006(image_array,secret_string,k,n,image_file_name=''):
 
     # 恢复出的和以前的应该是一致的
     assert(int((recover_d_array - d_array).sum()) == 0)
-
+    #使用了多少pixel来进行嵌入
+    num_pixels_changed = num_secret_groups * n
     #-----------------------------------------------------------------------------------
     #输出图像
     img_out = embeded_pixels_group.flatten()
     img_out = img_out[:512 * 512] #取前面的pixel
     #计算PSNR
     img_array_out = img_out.copy()
-    psnr = PSNR(image_array,img_array_out)
+    #psnr = PSNR(image_array,img_array_out)
+    imgpsnr1 = image_array[0:num_pixels_changed]
+    imgpsnr2 = img_array_out[0:num_pixels_changed]
+    psnr = PSNR(imgpsnr1, imgpsnr2)
     #print('EMD_2006 PSNR: %.2f' % psnr)
     print('EMD_2006 k=%d n=%d PSNR: %.2f' % (k,n,psnr))
     #csnr = CSNR(image_array,img_array_out)
@@ -211,7 +215,10 @@ def JY09(image_array,secret_string,k=2,image_file_name=''):
     img_out = img_out[:512 * 512] #取前面的pixel
     #计算PSNR
     img_array_out = img_out.copy()
-    psnr = PSNR(image_array,img_array_out)
+    #psnr = PSNR(image_array,img_array_out)
+    imgpsnr1 = image_array[0:num_pixels_changed]
+    imgpsnr2 = img_array_out[0:num_pixels_changed]
+    psnr = PSNR(imgpsnr1,imgpsnr2)
     print('JY09 k=%d PSNR: %.2f' % (k,psnr))
     print('JY09 k=%d pixels used: %d' % (k,num_pixels_changed))
     #重组图像
@@ -324,6 +331,8 @@ def KKWW_2016(image_array, secret_string,k=1,n=2,image_file_name=''):
                                 embeded_pixels_group[i, j - 1] = embeded_pixels_group[i, j - 1] + d_transfromed[j]
     # -----------------------------------------------------------------------------------
     pixels_changed = num_secret_groups * n
+    # 使用了多少pixel来进行嵌入
+    num_pixels_changed = num_secret_groups * n
     # -----------------------------------------------------------------------------------
     # 恢复，提取加密数据
     recover_d_array = np.zeros(num_secret_groups)
@@ -342,7 +351,10 @@ def KKWW_2016(image_array, secret_string,k=1,n=2,image_file_name=''):
     img_out = img_out[:512 * 512]  # 取前面的pixel
     # 计算PSNR
     img_array_out = img_out.copy()
-    psnr = PSNR(image_array, img_array_out)
+    #psnr = PSNR(image_array, img_array_out)
+    imgpsnr1 = image_array[0:num_pixels_changed]
+    imgpsnr2 = img_array_out[0:num_pixels_changed]
+    psnr = PSNR(imgpsnr1,imgpsnr2)
     print('KKWW_2016 k=%d n=%d PSNR: %.2f' % (k,n,psnr))
     # csnr = CSNR(image_array,img_array_out)
     # print('KKWW_2016 CSNR: %.2f' % csnr)
@@ -354,7 +366,7 @@ def KKWW_2016(image_array, secret_string,k=1,n=2,image_file_name=''):
     img_out = img_out.convert('L')
     (filepath, tempfilename) = os.path.split(image_file_name)
     (originfilename, extension) = os.path.splitext(tempfilename)
-    new_file = filepath + '\\KKWW-6\\' + originfilename + "_KKWW k_" + str(k) + "_n_"+str(n)+".png"
+    new_file = filepath + '\\Output1\\' + originfilename + "_KKWW k_" + str(k) + "_n_"+str(n)+".png"
     img_out.save(new_file, 'png')
     return 0
 
@@ -559,12 +571,12 @@ for file in os.listdir(path):
         #print(img_array3)
 
         #调用函数
-        # EMD_2006(img_array3,s_data,4,2,file_path)
-        # EMD_2006(img_array3,s_data,4,4,file_path)
+        EMD_2006(img_array3,s_data,4,2,file_path)
+        EMD_2006(img_array3,s_data,4,4,file_path)
        #EMD_2006(img_array3, s_data,4,8,file_path)
-        # for k in range(6,7):
-        #     for n in range(2,3):
-        #         p1 = KKWW_2016(img_array3,s_data,k,n,file_path)
+        for k in range(3,5):
+            for n in range(2,3):
+                p1 = KKWW_2016(img_array3,s_data,k,n,file_path)
         #KKWW_2016(img_array3,s_data,5,2,file_path)
         # JY09(img_array3,s_data,1,file_path)
         # JY09(img_array3,s_data,2,file_path)
