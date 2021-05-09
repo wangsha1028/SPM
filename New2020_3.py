@@ -429,7 +429,7 @@ def SB19(image_array, secret_string, k=3, image_file_name=''):
     assert (int((recover_d_array - secret_d_array).sum()) == 0)
     # 使用了多少pixel来进行嵌入
     num_pixels_changed = num_secret_groups * n
-    # -----------------------------------------------------------------------------------
+    # ----------------------------------------------------------------------------------
     # 输出图像
     img_out = embedded_pixels_group.flatten()
     img_out = img_out[:512 * 512]  # 取前面的pixel
